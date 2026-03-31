@@ -3,18 +3,100 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- p5.js -->
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/addons/p5.sound.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.19"></script>
-    
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Parametric Grid Visualizer</title>
+    <title>Pixel CA Visualizer</title>
   </head>
   <body>
-    <!-- Hidden file input for file upload via GUI button -->
     <input type="file" id="image-upload" accept="image/*" style="display: none;">
-    <main>
-    </main>
-    <script src="sketch.js"></script>
+    
+    <div id="gui-panel">
+      <div id="syc-wrapper">
+        <img src="Syc Generator.svg" id="syc-logo" alt="Syc Generator">
+        <div class="gol-overlay gol-beacon"></div>
+        <div class="gol-overlay gol-blinker"></div>
+        <div class="gol-overlay gol-toad"></div>
+      </div>
+      
+      <button id="btn-upload">Load Image</button>
+
+      <!-- Grid Settings -->
+      <div class="control-group">
+        <label>Grid Density (<span id="density-val">80</span>)</label>
+        <input type="range" id="param-density" min="32" max="120" value="80">
+      </div>
+      <div class="control-group">
+        <label>Alignment</label>
+        <select id="param-mode">
+          <option value="Tight">Tight</option>
+          <option value="Column Step">Column Step</option>
+          <option value="Column + Row Step">Column + Row Step</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Base Threshold (<span id="threshold-val">200</span>)</label>
+        <input type="range" id="param-threshold" min="0" max="255" value="200">
+      </div>
+
+      <!-- Colors -->
+      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
+        <label>Color Palette</label>
+        <select id="param-palette">
+          <option value="Base">Base</option>
+          <option value="Monochrome">Monochrome</option>
+          <option value="Vibrant Dark">Vibrant Dark</option>
+          <option value="Warm Matte">Warm Matte</option>
+        </select>
+        
+        <div id="custom-colors" style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px;">
+          <div class="color-row"><input type="color" id="col-bg" value="#FFF8E9"><label>Background</label></div>
+          <div class="color-row"><input type="color" id="col-sky" value="#A9DBFF"><label>Sky</label></div>
+          <div class="color-row"><input type="color" id="col-activeDark" value="#172119"><label>Active Dark</label></div>
+          <div class="color-row"><input type="color" id="col-activeMid" value="#918E43"><label>Active Mid</label></div>
+          <div class="color-row"><input type="color" id="col-inactive" value="#4D5024"><label>Inactive</label></div>
+          <button id="btn-save-palette" style="padding: 5px; font-size: 0.8rem; margin-top: 5px;">Save Custom Palette</button>
+        </div>
+      </div>
+
+      <!-- Cellular Automaton -->
+      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
+        <label>CA Influence (<span id="ca-influence-val">30</span>)</label>
+        <input type="range" id="param-ca-influence" min="0" max="255" value="30">
+      </div>
+      <div class="control-group">
+        <label>CA Updates per sec (<span id="ca-speed-val">3</span>)</label>
+        <input type="range" id="param-ca-speed" min="1" max="10" value="3">
+      </div>
+      <div class="control-group checkbox-group">
+        <input type="checkbox" id="param-ca-pause"> <label for="param-ca-pause">Pause CA</label>
+      </div>
+
+      <!-- Wave System -->
+      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
+        <label>Wave Intensity (<span id="wave-amp-val">0.5</span>)</label>
+        <input type="range" id="param-wave-amp" min="0" max="1" step="0.05" value="0.5">
+      </div>
+      <div class="control-group">
+        <label>Wave Speed (<span id="wave-speed-val">50</span>)</label>
+        <input type="range" id="param-wave-speed" min="0" max="100" step="1" value="50">
+      </div>
+      <div class="control-group checkbox-group">
+        <input type="checkbox" id="param-wave-pause"> <label for="param-wave-pause">Pause Wave</label>
+      </div>
+      
+      <!-- Exports -->
+      <div style="padding-top: 10px; border-top: 2px dashed #000; display:flex; flex-direction:column; gap:5px;">
+        <button id="btn-export">Export PNG</button>
+        <button id="btn-export-svg">Export SVG</button>
+        <button id="btn-record">Start Recording</button>
+      </div>
+    </div>
+
+    <div id="viewport-bg">
+      <div id="canvas-container"></div>
+    </div>
+
+    <script src="sketch.js?v=7"></script>
   </body>
 </html>

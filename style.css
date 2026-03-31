@@ -1,8 +1,244 @@
+@font-face {
+  font-family: 'PixelFont';
+  src: url('PPFraktionMono-Regular.otf') format('opentype');
+}
+
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
   overflow: hidden;
+  background-color: #f2f2f2;
+  font-family: 'PixelFont', 'Courier New', monospace;
+  display: flex;
+}
+
+#gui-panel {
+  width: 360px;
+  background-color: #ffffff;
+  border-right: 5px solid #000;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 6px 0 20px rgba(0,0,0,0.15);
+}
+
+#syc-wrapper {
+  position: relative;
+  margin-bottom: 5px;
+  padding-bottom: 20px;
+  border-bottom: 4px dashed #000;
+  cursor: pointer;
+}
+
+#syc-logo {
+  width: 100%;
+  max-width: 250px;
+  display: block;
+  margin: 0 auto;
+  transition: opacity 0.2s;
+}
+
+.gol-overlay {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+  background: transparent;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+#syc-wrapper:hover .gol-overlay {
+  opacity: 1;
+}
+
+#syc-wrapper:hover #syc-logo {
+  opacity: 0.15; /* Ghost out the logo to emphasize the Game of Life */
+}
+
+/* Loop 1: Beacon */
+.gol-beacon {
+  top: 15px;
+  left: 15%;
+  animation: gol-beacon-anim 0.6s infinite steps(1);
+}
+@keyframes gol-beacon-anim {
+  0%, 100% {
+    box-shadow: 
+      0 0 #000, 6px 0 #000, 0 6px #000, 6px 6px #000,
+      12px 12px #000, 18px 12px #000, 12px 18px #000, 18px 18px #000;
+  }
+  50% {
+    box-shadow: 
+      0 0 #000, 6px 0 #000, 0 6px #000,
+      18px 12px #000, 12px 18px #000, 18px 18px #000;
+  }
+}
+
+/* Loop 2: Blinker */
+.gol-blinker {
+  top: 35px;
+  right: 15%;
+  animation: gol-blinker-anim 0.6s infinite steps(1);
+}
+@keyframes gol-blinker-anim {
+  0%, 100% { box-shadow: 0 -6px #000, 0 0 #000, 0 6px #000; }
+  50% { box-shadow: -6px 0 #000, 0 0 #000, 6px 0 #000; }
+}
+
+/* Loop 3: Toad */
+.gol-toad {
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: gol-toad-anim 0.6s infinite steps(1);
+}
+@keyframes gol-toad-anim {
+  0%, 100% {
+    box-shadow: 
+      6px 0 #000, 12px 0 #000, 18px 0 #000,
+      0 6px #000, 6px 6px #000, 12px 6px #000;
+  }
+  50% {
+    box-shadow: 
+      12px -6px #000,
+      0 0 #000, 18px 0 #000,
+      0 6px #000, 18px 6px #000,
+      6px 12px #000;
+  }
+}
+
+button {
+  background-color: #fff;
+  border: 4px solid #000;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  box-shadow: 4px 4px 0px #000;
+}
+button:hover { background-color: #f0f0f0; }
+button:active {
+  box-shadow: 0px 0px 0px #000;
+  transform: translate(4px, 4px);
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 18px;
+  background: #f0f0f0;
+  border: 3px solid #000;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 24px;
+  background: #000;
+  cursor: pointer;
+}
+
+select {
+  padding: 6px;
+  border: 3px solid #000;
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #000;
+}
+select:focus { background: #f0f0f0; }
+
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+input[type="checkbox"] {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 3px solid #000;
+  cursor: pointer;
+  background: #fff;
+  position: relative;
+  box-shadow: 3px 3px 0px #000;
+  margin: 0;
+}
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 10px;
+  height: 10px;
+  background: #000;
+}
+
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+input[type="color"] {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 3px solid #000;
+  cursor: pointer;
+  background: #fff;
+}
+
+#viewport-bg {
+  flex: 1;
+  background-color: #e5e5e5;
+  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), 
+                    linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+  position: relative;
+}
+
+#canvas-container {
+  box-shadow: 16px 16px 0px rgba(0,0,0,0.25);
+  border: 6px solid #000;
   background-color: #FFF8E9;
+  display: flex;
+  max-width: 100%;
+  max-height: 100%;
 }
 canvas {
   display: block;
