@@ -2,6 +2,14 @@ let originalImg;
 let brightnessData = [];
 let colorData = [];
 
+// Image Preset Configuration
+const IMAGE_FOLDER = 'images/'; // Leave blank if placed in root directory
+const PRESET_IMAGES = [
+  'tree copy.jpg',
+  'leaf.png',
+  'seed.jpg'
+];
+
 // Cellular Automaton State
 let caState = [];
 let caNext = [];
@@ -16,6 +24,10 @@ let mediaRecorder;
 let recordedChunks = [];
 
 let waveTime = 0;
+let colorWaveTime = 0;
+
+// Discrete steps for slider
+const densitySteps = [32, 48, 64, 96, 120];
 
 const palettes = {
   'Base': {
@@ -37,7 +49,9 @@ const palettes = {
 };
 
 const params = {
-  gridDensity: 80,
+  gridDensity: 64,
+  imageZoom: 1.0,
+  shapeDistPreset: 1,
   gridMode: 'Tight',
   BASE_THRESHOLD: 200,
   palette: 'Base',
@@ -47,18 +61,24 @@ const params = {
   },
 
   // CA parameters
-  CA_INFLUENCE: 30,  // Determines how intensely CA modifies threshold structures
-  CA_SPEED: 20,      // (60fps / 3 UPS = 20 frames per step delay)
+  CA_INFLUENCE: 30,
+  CA_SPEED: 20,
   isCAPaused: false,
-  
+
   // Wave parameters
-  WAVE_AMP: 0.5,     // Shape distribution interpolation override scaler
-  WAVE_SPEED: 0.035, // Rate of spatial grid temporal deformation
-  isWavePaused: false
+  WAVE_AMP: 0.5,
+  WAVE_SPEED: 0.035,
+  isWavePaused: false,
+
+  // Color Wave parameters
+  COLOR_WAVE_AMP: 0.5,
+  COLOR_WAVE_SPEED: 0.005, // Map 10 from slider cleanly to 0.005 default
+  isColorWavePaused: false
 };
 
 function preload() {
-  originalImg = loadImage("tree.jpg");
+  // We preload the first image in array implicitly to maintain 0 lag on open
+  originalImg = loadImage(IMAGE_FOLDER + PRESET_IMAGES[0]);
 }
 
 function setup() {
@@ -148,6 +168,21 @@ function updatePaletteColorsFromSelection() {
 function bindGUI() {
   document.getElementById('btn-upload').onclick = () => document.getElementById('image-upload').click();
 
+  let presetSelect = document.getElementById('param-image-preset');
+  PRESET_IMAGES.forEach(imgName => {
+    let opt = document.createElement('option');
+    opt.value = imgName;
+    opt.innerText = imgName;
+    presetSelect.appendChild(opt);
+  });
+
+  presetSelect.onchange = (e) => {
+    loadImage(IMAGE_FOLDER + e.target.value, (newImg) => {
+      originalImg = newImg;
+      windowResized();
+    });
+  };
+
   document.getElementById('image-upload').onchange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
@@ -170,13 +205,38 @@ function bindGUI() {
       if (valHtmlId) document.getElementById(valHtmlId).innerText = val;
       if (runSetup) setupGrid();
 
+      // Run mapping exclusively for params that need complex handling
       if (id === 'param-palette') {
         updatePaletteColorsFromSelection();
       }
     };
   };
 
-  bindInput('param-density', 'gridDensity', 'density-val', true);
+  bindInput('param-zoom', 'imageZoom', 'zoom-val', true);
+  
+  let distSlider = document.getElementById('param-dist-preset');
+  distSlider.oninput = (e) => {
+    let v = parseInt(e.target.value);
+    params.shapeDistPreset = v;
+    document.getElementById('dist-preset-val').innerText = v;
+    
+    let desc = "Background biased";
+    if (v === 2) desc = "Balanced bands";
+    else if (v === 3) desc = "Evenly distributed";
+    else if (v === 4) desc = "Mid-tone heavy";
+    else if (v === 5) desc = "Foreground heavy";
+    
+    document.getElementById('dist-preset-desc').innerText = desc;
+  };
+
+  document.getElementById('param-density').oninput = (e) => {
+    let rawIndex = parseInt(e.target.value);
+    let mappedVal = densitySteps[rawIndex];
+    params.gridDensity = mappedVal;
+    document.getElementById('density-val').innerText = mappedVal;
+    setupGrid();
+  };
+
   bindInput('param-mode', 'gridMode', null, true);
   bindInput('param-threshold', 'BASE_THRESHOLD', 'threshold-val');
   bindInput('param-palette', 'palette');
@@ -226,9 +286,18 @@ function bindGUI() {
   document.getElementById('param-wave-speed').oninput = (e) => {
     let intVal = parseInt(e.target.value);
     document.getElementById('wave-speed-val').innerText = intVal;
-    params.WAVE_SPEED = intVal * 0.0003; // maps 0-100 to 0.0-0.03
+    params.WAVE_SPEED = intVal * 0.0003;
   };
   bindInput('param-wave-pause', 'isWavePaused');
+
+  // Color Wave Controls
+  bindInput('param-color-wave-amp', 'COLOR_WAVE_AMP', 'color-wave-amp-val');
+  document.getElementById('param-color-wave-speed').oninput = (e) => {
+    let intV = parseInt(e.target.value);
+    document.getElementById('color-wave-speed-val').innerText = intV;
+    params.COLOR_WAVE_SPEED = intV * 0.0005; // very slow, organic
+  };
+  bindInput('param-color-wave-pause', 'isColorWavePaused');
 
   document.getElementById('btn-export').onclick = () => saveCanvas('grid_export', 'png');
   document.getElementById('btn-export-svg').onclick = exportSVG;
@@ -253,6 +322,18 @@ function setupGrid() {
 
   tilesX = Math.floor(params.gridDensity);
   let renderImg = originalImg.get();
+
+  if (params.imageZoom !== 1.0) {
+    let cw = originalImg.width;
+    let ch = originalImg.height;
+    let pg = createGraphics(cw, ch);
+    pg.background(color(palettes[params.palette]?.bg || params.customColors?.bg || '#FFF8E9')); 
+    pg.imageMode(CENTER);
+    pg.image(originalImg, cw/2, ch/2, cw * params.imageZoom, ch * params.imageZoom);
+    renderImg = pg.get();
+    pg.remove();
+  }
+
   tilesY = int(tilesX * renderImg.height / renderImg.width);
 
   cellSize = min(width / tilesX, height / tilesY);
@@ -365,18 +446,41 @@ function getDrawList() {
       let activeThreshold = params.BASE_THRESHOLD + caOffset + waveThresholdOffset;
       let active = (bVal < activeThreshold);
 
+      // A signal wave moving diagonally through the grid
+      let colorSignal = sin(x * 0.15 - y * 0.1 + colorWaveTime * 2.0);
+
+      // Static per-cell offset/delay to organically stagger the discrete transitions
+      let cellVariant = ((x * 12.345 + y * 67.89) % 1.0) * 2.0 - 1.0;
+
+      // Combined signal scaled by Intensity slider
+      let waveImpact = (colorSignal + cellVariant) * params.COLOR_WAVE_AMP;
+
       let fillCol;
       if (isSky) {
-        fillCol = colors.sky; // Sky -> light tones
+        fillCol = colors.sky;
       } else {
         if (active) {
-          fillCol = (bVal < 75) ? colors.activeDark : colors.activeMid;
+          // Baseline brightness hierarchy determines default color
+          let isDark = (bVal < 75);
+
+          // Discrete step: If the traveling signal crosses the threshold, swap the active tones!
+          if (waveImpact > 0.4) {
+            fillCol = isDark ? colors.activeMid : colors.activeDark;
+          } else {
+            fillCol = isDark ? colors.activeDark : colors.activeMid;
+          }
         } else {
           fillCol = colors.inactive;
         }
       }
 
-      let isSmall = !(active);
+      let isSmall = false;
+      let distMode = params.shapeDistPreset;
+      if (distMode === 1) isSmall = (bVal >= activeThreshold); // Background biased (default)
+      else if (distMode === 2) isSmall = (Math.floor(bVal / 64) % 2 === 1); // Balanced distribution
+      else if (distMode === 3) isSmall = (Math.floor(bVal / 24) % 2 === 0); // Evenly distributed across rightness
+      else if (distMode === 4) isSmall = (bVal >= 80 && bVal <= 160); // Mid-tone heavy
+      else if (distMode === 5) isSmall = (bVal < activeThreshold); // Foreground heavy (inverted)
 
       renderList.push({
         x: cx, y: cy,
@@ -391,6 +495,7 @@ function getDrawList() {
 
 function draw() {
   if (!params.isWavePaused) waveTime += params.WAVE_SPEED;
+  if (!params.isColorWavePaused) colorWaveTime += params.COLOR_WAVE_SPEED;
   if (!params.isCAPaused && frameCount % params.CA_SPEED === 0) updateCA();
 
   let { colors, renderList } = getDrawList();

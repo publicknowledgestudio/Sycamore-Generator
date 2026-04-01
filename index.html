@@ -21,10 +21,29 @@
       
       <button id="btn-upload">Load Image</button>
 
+      <!-- Image Presets -->
+      <div class="control-group">
+        <label>Image Preset</label>
+        <select id="param-image-preset">
+          <!-- Populated natively via JS -->
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Image Scale (Zoom: <span id="zoom-val">1.0</span>x)</label>
+        <input type="range" id="param-zoom" min="0.5" max="3.0" step="0.1" value="1.0">
+      </div>
+
       <!-- Grid Settings -->
       <div class="control-group">
-        <label>Grid Density (<span id="density-val">80</span>)</label>
-        <input type="range" id="param-density" min="32" max="120" value="80">
+        <label>Grid Density (<span id="density-val">64</span>)</label>
+        <input type="range" id="param-density" min="0" max="4" value="2" step="1">
+      </div>
+      
+      <div class="control-group">
+        <label>Shape Distribution (<span id="dist-preset-val">1</span>)</label>
+        <input type="range" id="param-dist-preset" min="1" max="5" step="1" value="1">
+        <small style="display:block; font-size:0.75em; color:#666; margin-top: 4px;" id="dist-preset-desc">Background biased</small>
       </div>
       <div class="control-group">
         <label>Alignment</label>
@@ -83,6 +102,19 @@
       </div>
       <div class="control-group checkbox-group">
         <input type="checkbox" id="param-wave-pause"> <label for="param-wave-pause">Pause Wave</label>
+      </div>
+
+      <!-- Color Wave System -->
+      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
+        <label>Color Wave Intensity (<span id="color-wave-amp-val">0.5</span>)</label>
+        <input type="range" id="param-color-wave-amp" min="0" max="1" step="0.05" value="0.5">
+      </div>
+      <div class="control-group">
+        <label>Color Wave Speed (<span id="color-wave-speed-val">10</span>)</label>
+        <input type="range" id="param-color-wave-speed" min="0" max="100" step="1" value="10">
+      </div>
+      <div class="control-group checkbox-group">
+        <input type="checkbox" id="param-color-wave-pause"> <label for="param-color-wave-pause">Pause Color Wave</label>
       </div>
       
       <!-- Exports -->
