@@ -114,24 +114,34 @@ function setup() {
 function setupRecorder(canvas) {
   if (window.MediaRecorder) {
     let stream = canvas.elt.captureStream(30);
-    let options = { mimeType: 'video/webm' };
-    if (MediaRecorder.isTypeSupported('video/mp4')) {
-      options = { mimeType: 'video/mp4' };
+    
+    // Check multiple possible mime types
+    let mimes = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    let selectedMime = mimes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+    
+    if (selectedMime) {
+      mediaRecorder = new MediaRecorder(stream, { mimeType: selectedMime });
+      
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+      };
+      
+      mediaRecorder.onstop = () => {
+        if (recordedChunks.length === 0) return;
+        let ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
+        let blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = `render_${Date.now()}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+      };
     }
-    mediaRecorder = new MediaRecorder(stream, options);
-    mediaRecorder.ondataavailable = function (e) {
-      if (e.data.size > 0) recordedChunks.push(e.data);
-    };
-    mediaRecorder.onstop = function () {
-      let ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
-      let blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
-      let url = URL.createObjectURL(blob);
-      let a = document.createElement('a');
-      a.href = url;
-      a.download = `render.${ext}`;
-      a.click();
-      URL.revokeObjectURL(url);
-    };
   }
 }
 
