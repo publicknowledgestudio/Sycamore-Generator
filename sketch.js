@@ -30,7 +30,7 @@ let colorWaveTime = 0;
 const densitySteps = [32, 48, 64, 96, 120];
 
 const palettes = {
-  'Base': {
+  'Noon': {
     bg: '#FFF8E9', sky: '#A9DBFF',
     activeDark: '#172119', activeMid: '#918E43', inactive: '#4D5024'
   },
@@ -74,7 +74,7 @@ const params = {
   COLOR_WAVE_AMP: 0.5,
   COLOR_WAVE_SPEED: 0.005, // Map 10 from slider cleanly to 0.005 default
   isColorWavePaused: false,
-  
+
   isGlobalPaused: false
 };
 
@@ -237,19 +237,19 @@ function bindGUI() {
   };
 
   bindInput('param-zoom', 'imageZoom', 'zoom-val', true);
-  
+
   let distSlider = document.getElementById('param-dist-preset');
   distSlider.oninput = (e) => {
     let v = parseInt(e.target.value);
     params.shapeDistPreset = v;
     document.getElementById('dist-preset-val').innerText = v;
-    
+
     let desc = "Background biased";
     if (v === 2) desc = "Balanced bands";
     else if (v === 3) desc = "Evenly distributed";
     else if (v === 4) desc = "Mid-tone heavy";
     else if (v === 5) desc = "Foreground heavy";
-    
+
     document.getElementById('dist-preset-desc').innerText = desc;
   };
 
@@ -352,9 +352,9 @@ function setupGrid() {
     let cw = originalImg.width;
     let ch = originalImg.height;
     let pg = createGraphics(cw, ch);
-    pg.background(color(palettes[params.palette]?.bg || params.customColors?.bg || '#FFF8E9')); 
+    pg.background(color(palettes[params.palette]?.bg || params.customColors?.bg || '#FFF8E9'));
     pg.imageMode(CENTER);
-    pg.image(originalImg, cw/2, ch/2, cw * params.imageZoom, ch * params.imageZoom);
+    pg.image(originalImg, cw / 2, ch / 2, cw * params.imageZoom, ch * params.imageZoom);
     renderImg = pg.get();
     pg.remove();
   }
@@ -407,12 +407,6 @@ function windowResized() {
     }
   }
   resizeCanvas(Math.floor(targetW), Math.floor(targetH));
-  
-  // Explicitly resize the container to match the canvas to prevent overflow/alignment issues
-  let elt = container.elt;
-  elt.style.width = Math.floor(targetW) + 'px';
-  elt.style.height = Math.floor(targetH) + 'px';
-
   setupGrid();
 }
 
