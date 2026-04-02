@@ -30,21 +30,29 @@ let colorWaveTime = 0;
 const densitySteps = [32, 48, 64, 96, 120];
 
 const palettes = {
+  'Morning': {
+    bg: '#FFF4DF', sky: '#FFD600',
+    activeDark: '#936F44', activeMid: '#9FB53A', inactive: '#F65926'
+  },
   'Noon': {
     bg: '#FFF8E9', sky: '#A9DBFF',
     activeDark: '#172119', activeMid: '#918E43', inactive: '#4D5024'
   },
+  'Afternoon': {
+    bg: '#F5E6CC', sky: '#E8A87C',
+    activeDark: '#4D3B31', activeMid: '#E27D60', inactive: '#85D2D0'
+  },
+  'Evening': {
+    bg: '#1B1521', sky: '#FFD600',
+    activeDark: '#972053', activeMid: '#595721', inactive: '#F65926'
+  },
+  'Night': {
+    bg: '#0A0A0A', sky: '#21465E',
+    activeDark: '#972053', activeMid: '#595721', inactive: '#343612'
+  },
   'Monochrome': {
     bg: '#EAEAEA', sky: '#999999',
     activeDark: '#111111', activeMid: '#555555', inactive: '#333333'
-  },
-  'Vibrant Dark': {
-    bg: '#003358', sky: '#8FB9D6',
-    activeDark: '#A3B34F', activeMid: '#816845', inactive: '#2C3531'
-  },
-  'Warm Matte': {
-    bg: '#F5E6CC', sky: '#E8A87C',
-    activeDark: '#4D3B31', activeMid: '#E27D60', inactive: '#85D2D0'
   }
 };
 
@@ -54,7 +62,7 @@ const params = {
   shapeDistPreset: 1,
   gridMode: 'Tight',
   BASE_THRESHOLD: 200,
-  palette: 'Base',
+  palette: 'Noon',
   customColors: {
     bg: '#FFF8E9', sky: '#A9DBFF',
     activeDark: '#172119', activeMid: '#918E43', inactive: '#4D5024'
