@@ -407,6 +407,12 @@ function windowResized() {
     }
   }
   resizeCanvas(Math.floor(targetW), Math.floor(targetH));
+  
+  // Explicitly resize the container to match the canvas to prevent overflow/alignment issues
+  let elt = container.elt;
+  elt.style.width = Math.floor(targetW) + 'px';
+  elt.style.height = Math.floor(targetH) + 'px';
+
   setupGrid();
 }
 
