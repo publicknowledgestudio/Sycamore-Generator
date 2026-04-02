@@ -5,7 +5,7 @@ let colorData = [];
 // Image Preset Configuration
 const IMAGE_FOLDER = 'images/'; // Leave blank if placed in root directory
 const PRESET_IMAGES = [
-  'tree copy.jpg',
+  'tree.jpg',
   'leaf.png',
   'seed.jpg'
 ];
