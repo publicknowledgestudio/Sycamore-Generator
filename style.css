@@ -147,6 +147,16 @@ label {
   text-transform: uppercase;
 }
 
+.property-desc {
+  display: block;
+  font-size: 0.72rem;
+  color: #666;
+  margin-top: 2px;
+  line-height: 1.25;
+  font-weight: normal;
+  text-transform: none;
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
