@@ -73,7 +73,9 @@ const params = {
   // Color Wave parameters
   COLOR_WAVE_AMP: 0.5,
   COLOR_WAVE_SPEED: 0.005, // Map 10 from slider cleanly to 0.005 default
-  isColorWavePaused: false
+  isColorWavePaused: false,
+  
+  isGlobalPaused: false
 };
 
 function preload() {
@@ -114,24 +116,34 @@ function setup() {
 function setupRecorder(canvas) {
   if (window.MediaRecorder) {
     let stream = canvas.elt.captureStream(30);
-    let options = { mimeType: 'video/webm' };
-    if (MediaRecorder.isTypeSupported('video/mp4')) {
-      options = { mimeType: 'video/mp4' };
+
+    // Check multiple possible mime types
+    let mimes = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    let selectedMime = mimes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+
+    if (selectedMime) {
+      mediaRecorder = new MediaRecorder(stream, { mimeType: selectedMime });
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        if (recordedChunks.length === 0) return;
+        let ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
+        let blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = `render_${Date.now()}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+      };
     }
-    mediaRecorder = new MediaRecorder(stream, options);
-    mediaRecorder.ondataavailable = function (e) {
-      if (e.data.size > 0) recordedChunks.push(e.data);
-    };
-    mediaRecorder.onstop = function () {
-      let ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
-      let blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
-      let url = URL.createObjectURL(blob);
-      let a = document.createElement('a');
-      a.href = url;
-      a.download = `render.${ext}`;
-      a.click();
-      URL.revokeObjectURL(url);
-    };
   }
 }
 
@@ -147,6 +159,18 @@ function toggleRecording() {
     mediaRecorder.start();
     isRecording = true;
     btn.innerText = 'Stop Recording';
+  }
+}
+
+function toggleGlobalPause() {
+  params.isGlobalPaused = !params.isGlobalPaused;
+  let btn = document.getElementById('btn-play-pause');
+  if (params.isGlobalPaused) {
+    btn.innerText = 'Play';
+    btn.classList.add('paused');
+  } else {
+    btn.innerText = 'Pause';
+    btn.classList.remove('paused');
   }
 }
 
@@ -302,6 +326,7 @@ function bindGUI() {
   document.getElementById('btn-export').onclick = () => saveCanvas('grid_export', 'png');
   document.getElementById('btn-export-svg').onclick = exportSVG;
   document.getElementById('btn-record').onclick = toggleRecording;
+  document.getElementById('btn-play-pause').onclick = toggleGlobalPause;
 }
 
 function initCA() {
@@ -494,9 +519,11 @@ function getDrawList() {
 }
 
 function draw() {
-  if (!params.isWavePaused) waveTime += params.WAVE_SPEED;
-  if (!params.isColorWavePaused) colorWaveTime += params.COLOR_WAVE_SPEED;
-  if (!params.isCAPaused && frameCount % params.CA_SPEED === 0) updateCA();
+  if (!params.isGlobalPaused) {
+    if (!params.isWavePaused) waveTime += params.WAVE_SPEED;
+    if (!params.isColorWavePaused) colorWaveTime += params.COLOR_WAVE_SPEED;
+    if (!params.isCAPaused && frameCount % params.CA_SPEED === 0) updateCA();
+  }
 
   let { colors, renderList } = getDrawList();
 
