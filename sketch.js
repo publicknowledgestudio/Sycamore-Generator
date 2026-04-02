@@ -38,10 +38,6 @@ const palettes = {
     bg: '#FFF8E9', sky: '#A9DBFF',
     activeDark: '#172119', activeMid: '#918E43', inactive: '#4D5024'
   },
-  'Afternoon': {
-    bg: '#F5E6CC', sky: '#E8A87C',
-    activeDark: '#4D3B31', activeMid: '#E27D60', inactive: '#85D2D0'
-  },
   'Evening': {
     bg: '#1B1521', sky: '#FFD600',
     activeDark: '#972053', activeMid: '#595721', inactive: '#F65926'
