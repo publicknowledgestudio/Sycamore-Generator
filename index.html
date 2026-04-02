@@ -23,7 +23,7 @@
 
       <!-- Image Presets -->
       <div class="control-group">
-        <label>Image Preset</label>
+        <label>Image Preset <span class="tooltip-icon">ⓘ<span class="tooltip-text">Choose a pre-defined image to visualize.</span></span></label>
         <select id="param-image-preset">
           <!-- Populated natively via JS -->
         </select>
@@ -31,22 +31,22 @@
 
       <div class="control-group">
         <label>Image Scale (Zoom: <span id="zoom-val">1.0</span>x)</label>
-        <input type="range" id="param-zoom" min="1.0" max="3.0" step="0.1" value="1.0">
+        <input type="range" id="param-zoom" min="1.0" max="2.0" step="0.1" value="1.0">
       </div>
 
       <!-- Grid Settings -->
       <div class="control-group">
-        <label>Grid Density (<span id="density-val">64</span>)</label>
+        <label>Grid Density (<span id="density-val">64</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Changes the number of tiles in the grid.</span></span></label>
         <input type="range" id="param-density" min="0" max="4" value="2" step="1">
       </div>
       
       <div class="control-group">
-        <label>Shape Distribution (<span id="dist-preset-val">1</span>)</label>
+        <label>Shape Distribution (<span id="dist-preset-val">1</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Controls how shapes are distributed based on image brightness.</span></span></label>
         <input type="range" id="param-dist-preset" min="1" max="5" step="1" value="1">
-        <small style="display:block; font-size:0.75em; color:#666; margin-top: 4px;" id="dist-preset-desc">Background biased</small>
+        <small class="property-desc" id="dist-preset-desc">Background biased</small>
       </div>
       <div class="control-group">
-        <label>Alignment</label>
+        <label>Alignment <span class="tooltip-icon">ⓘ<span class="tooltip-text">Sets the layout pattern of the grid tiles.</span></span></label>
         <select id="param-mode">
           <option value="Tight">Tight</option>
           <option value="Column Step">Column Step</option>
@@ -54,13 +54,13 @@
         </select>
       </div>
       <div class="control-group">
-        <label>Base Threshold (<span id="threshold-val">200</span>)</label>
+        <label>Base Threshold (<span id="threshold-val">200</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Adjusts the brightness cutoff for active tiles.</span></span></label>
         <input type="range" id="param-threshold" min="0" max="255" value="200">
       </div>
 
       <!-- Colors -->
       <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>Color Palette</label>
+        <label>Color Palette <span class="tooltip-icon">ⓘ<span class="tooltip-text">Select a curated color scheme for the visualizer.</span></span></label>
         <select id="param-palette">
           <option value="Base">Base</option>
           <option value="Monochrome">Monochrome</option>
@@ -80,11 +80,11 @@
 
       <!-- Cellular Automaton -->
       <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>CA Influence (<span id="ca-influence-val">30</span>)</label>
+        <label>CA Influence (<span id="ca-influence-val">30</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Strength of the Cellular Automaton effect on the grid.</span></span></label>
         <input type="range" id="param-ca-influence" min="0" max="255" value="30">
       </div>
       <div class="control-group">
-        <label>CA Updates per sec (<span id="ca-speed-val">3</span>)</label>
+        <label>CA Updates per sec (<span id="ca-speed-val">3</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">How many times per second the CA updates.</span></span></label>
         <input type="range" id="param-ca-speed" min="1" max="10" value="3">
       </div>
       <div class="control-group checkbox-group">
@@ -93,11 +93,11 @@
 
       <!-- Wave System -->
       <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>Wave Intensity (<span id="wave-amp-val">0.5</span>)</label>
+        <label>Wave Intensity (<span id="wave-amp-val">0.5</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Strength of the displacement wave animation.</span></span></label>
         <input type="range" id="param-wave-amp" min="0" max="1" step="0.05" value="0.5">
       </div>
       <div class="control-group">
-        <label>Wave Speed (<span id="wave-speed-val">50</span>)</label>
+        <label>Wave Speed (<span id="wave-speed-val">50</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">How fast the wave travels across the grid.</span></span></label>
         <input type="range" id="param-wave-speed" min="0" max="100" step="1" value="50">
       </div>
       <div class="control-group checkbox-group">
@@ -106,11 +106,11 @@
 
       <!-- Color Wave System -->
       <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>Color Wave Intensity (<span id="color-wave-amp-val">0.5</span>)</label>
+        <label>Color Wave Intensity (<span id="color-wave-amp-val">0.5</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Strength of the color shifting wave.</span></span></label>
         <input type="range" id="param-color-wave-amp" min="0" max="1" step="0.05" value="0.5">
       </div>
       <div class="control-group">
-        <label>Color Wave Speed (<span id="color-wave-speed-val">10</span>)</label>
+        <label>Color Wave Speed (<span id="color-wave-speed-val">10</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">How fast the color shifting wave moves.</span></span></label>
         <input type="range" id="param-color-wave-speed" min="0" max="100" step="1" value="10">
       </div>
       <div class="control-group checkbox-group">
