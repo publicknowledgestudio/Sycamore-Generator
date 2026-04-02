@@ -226,7 +226,7 @@ function bindGUI() {
 
   const bindInput = (id, paramKey, valHtmlId = null, runSetup = false) => {
     let el = document.getElementById(id);
-    el.oninput = (e) => {
+    el.onchange = (e) => {
       let val = (el.type === 'checkbox') ? el.checked : el.value;
       if (typeof params[paramKey] === 'number') val = parseFloat(val);
       params[paramKey] = val;
@@ -239,6 +239,8 @@ function bindGUI() {
       }
     };
   };
+
+  bindInput('param-palette', 'palette');
 
   bindInput('param-zoom', 'imageZoom', 'zoom-val', true);
 
