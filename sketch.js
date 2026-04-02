@@ -533,11 +533,6 @@ function draw() {
 
   background(colors.bg);
 
-  if (isRecording && frameCount % 30 < 15) {
-    fill(255, 50, 50);
-    circle(30, 30, 15);
-  }
-
   for (let item of renderList) {
     fill(item.col);
     rect(item.x, item.y, item.w, item.h);
