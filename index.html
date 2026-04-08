@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<<<<<<< Updated upstream
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,116 +22,356 @@
       
       <button id="btn-upload">Load Image</button>
       <button id="btn-play-pause">Pause</button>
+=======
+>>>>>>> Stashed changes
 
-      <!-- Image Presets -->
-      <div class="control-group">
-        <label>Image Preset <span class="tooltip-icon">ⓘ<span class="tooltip-text">Choose a pre-defined image to visualize.</span></span></label>
-        <select id="param-image-preset">
-          <!-- Populated natively via JS -->
-        </select>
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.11/lib/p5.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400;0,500;0,600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="style.css?v=14">
+  <title>Sycamore Generator</title>
+</head>
 
-      <div class="control-group">
-        <label>Image Scale (Zoom: <span id="zoom-val">1.0</span>x)</label>
-        <input type="range" id="param-zoom" min="1.0" max="2.0" step="0.1" value="1.0">
-      </div>
+<body>
+  <input type="file" id="image-upload" accept="image/*" style="display:none;">
 
-      <!-- Grid Settings -->
-      <div class="control-group">
-        <label>Grid Density (<span id="density-val">64</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Changes the number of tiles in the grid.</span></span></label>
-        <input type="range" id="param-density" min="0" max="4" value="2" step="1">
-      </div>
-      
-      <div class="control-group">
-        <label>Shape Distribution (<span id="dist-preset-val">1</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Controls how shapes are distributed based on image brightness.</span></span></label>
-        <input type="range" id="param-dist-preset" min="1" max="5" step="1" value="1">
-        <small class="property-desc" id="dist-preset-desc">Background biased</small>
-      </div>
-      <div class="control-group">
-        <label>Alignment <span class="tooltip-icon">ⓘ<span class="tooltip-text">Sets the layout pattern of the grid tiles.</span></span></label>
-        <select id="param-mode">
-          <option value="Tight">Tight</option>
-          <option value="Column Step">Column Step</option>
-          <option value="Column + Row Step">Column + Row Step</option>
-        </select>
-      </div>
-      <div class="control-group">
-        <label>Base Threshold (<span id="threshold-val">200</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Adjusts the brightness cutoff for active tiles.</span></span></label>
-        <input type="range" id="param-threshold" min="0" max="255" value="200">
-      </div>
+  <!-- Canvas -->
+  <div id="viewport-bg">
+    <div id="canvas-container"></div>
+  </div>
 
-      <!-- Colors -->
-      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>Color Palette <span class="tooltip-icon">ⓘ<span class="tooltip-text">Select a curated color scheme for the visualizer.</span></span></label>
-        <select id="param-palette">
-          <option value="Morning">Morning</option>
-          <option value="Noon" selected>Noon</option>
-          <option value="Evening">Evening</option>
-          <option value="Night">Night</option>
-          <option value="Monochrome">Monochrome</option>
-        </select>
-        
-        <div id="custom-colors" style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px;">
-          <div class="color-row"><input type="color" id="col-bg" value="#FFF8E9"><label>Background</label></div>
-          <div class="color-row"><input type="color" id="col-sky" value="#A9DBFF"><label>Sky</label></div>
-          <div class="color-row"><input type="color" id="col-activeDark" value="#172119"><label>Active Dark</label></div>
-          <div class="color-row"><input type="color" id="col-activeMid" value="#918E43"><label>Active Mid</label></div>
-          <div class="color-row"><input type="color" id="col-inactive" value="#4D5024"><label>Inactive</label></div>
-          <button id="btn-save-palette" style="padding: 5px; font-size: 0.8rem; margin-top: 5px;">Save Custom Palette</button>
+  <!-- Toolbar: both rows stacked, centered -->
+  <div id="toolbar">
+
+    <!-- Row 1: Icon Controls — centered, #111 bg -->
+    <div id="toolbar-top-wrap">
+      <div id="toolbar-top">
+        <!-- ImageSquare + Preset Thumbnail -->
+        <div class="tb-group" style="gap:4px;">
+          <!-- ImageSquare icon from Figma -->
+          <div class="tb-icon-cell" id="btn-upload" title="Load custom image" style="cursor:pointer;">
+            <img src="assets/image_upload.svg" width="32" height="32" alt="Load Image">
+          </div>
+          <!-- Preset image thumbnail — click to open preset picker -->
+          <div class="tb-icon-cell tb-thumb-cell" id="preset-thumb-trigger" title="Choose image preset">
+            <div class="tb-thumb-frame">
+              <img id="preset-thumb-img" src="images/tree.jpg" alt="Current Image">
+            </div>
+          </div>
+        </div>
+
+        <div class="tb-vdivider"></div>
+
+        <!-- Play/Pause — using Figma Play SVG -->
+        <div class="tb-icon-cell tb-btn" id="btn-play-pause" title="Pause All">
+          <img id="icon-play-img" src="assets/pause.svg" width="32" height="32" alt="Play/Pause">
+        </div>
+
+        <div class="tb-vdivider"></div>
+
+        <!-- Record + Download -->
+        <div class="tb-group" style="gap:8px;">
+          <div class="tb-icon-cell tb-btn" id="btn-record" title="Record Video">
+            <img id="icon-record-img" src="assets/record.svg" width="32" height="32" alt="Record">
+          </div>
+          <div class="tb-icon-cell tb-btn" id="btn-export" title="Export PNG">
+            <img src="assets/download.svg" width="32" height="32" alt="Download">
+          </div>
         </div>
       </div>
-
-      <!-- Cellular Automaton -->
-      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>CA Influence (<span id="ca-influence-val">30</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Strength of the Cellular Automaton effect on the grid.</span></span></label>
-        <input type="range" id="param-ca-influence" min="0" max="255" value="30">
-      </div>
-      <div class="control-group">
-        <label>CA Updates per sec (<span id="ca-speed-val">3</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">How many times per second the CA updates.</span></span></label>
-        <input type="range" id="param-ca-speed" min="1" max="10" value="3">
-      </div>
-      <div class="control-group checkbox-group">
-        <input type="checkbox" id="param-ca-pause"> <label for="param-ca-pause">Pause CA</label>
-      </div>
-
-      <!-- Wave System -->
-      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>Wave Intensity (<span id="wave-amp-val">0.5</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Strength of the displacement wave animation.</span></span></label>
-        <input type="range" id="param-wave-amp" min="0" max="1" step="0.05" value="0.5">
-      </div>
-      <div class="control-group">
-        <label>Wave Speed (<span id="wave-speed-val">50</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">How fast the wave travels across the grid.</span></span></label>
-        <input type="range" id="param-wave-speed" min="0" max="100" step="1" value="50">
-      </div>
-      <div class="control-group checkbox-group">
-        <input type="checkbox" id="param-wave-pause"> <label for="param-wave-pause">Pause Wave</label>
-      </div>
-
-      <!-- Color Wave System -->
-      <div class="control-group" style="padding-top: 10px; border-top: 2px dashed #000;">
-        <label>Color Wave Intensity (<span id="color-wave-amp-val">0.5</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">Strength of the color shifting wave.</span></span></label>
-        <input type="range" id="param-color-wave-amp" min="0" max="1" step="0.05" value="0.5">
-      </div>
-      <div class="control-group">
-        <label>Color Wave Speed (<span id="color-wave-speed-val">10</span>) <span class="tooltip-icon">ⓘ<span class="tooltip-text">How fast the color shifting wave moves.</span></span></label>
-        <input type="range" id="param-color-wave-speed" min="0" max="100" step="1" value="10">
-      </div>
-      <div class="control-group checkbox-group">
-        <input type="checkbox" id="param-color-wave-pause"> <label for="param-color-wave-pause">Pause Color Wave</label>
-      </div>
-      
-      <!-- Exports -->
-      <div style="padding-top: 10px; border-top: 2px dashed #000; display:flex; flex-direction:column; gap:5px;">
-        <button id="btn-export">Export PNG</button>
-        <button id="btn-export-svg">Export SVG</button>
-        <button id="btn-record">Start Recording</button>
-      </div>
     </div>
 
-    <div id="viewport-bg">
-      <div id="canvas-container"></div>
-    </div>
+    <!-- Row 2: Tab Bar — centered, #454545 bg -->
+    <div id="toolbar-bottom-wrap">
+      <div id="toolbar-bottom">
 
-    <script src="sketch.js?v=8"></script>
-  </body>
+        <!-- Image Tweaker Tab (active = yellow) -->
+        <button class="tb-overlay tb-dark tb-tab active" id="tab-image" title="Image Tweaker — adjust resolution, zoom, threshold & distribution">
+          <span class="tb-overlay-text">Image Tweaker</span>
+          <div class="tb-icon16">
+            <img src="assets/tweaker_sliders.svg" width="16" height="16" alt="Settings">
+          </div>
+        </button>
+
+        <!-- Alignment Dropdown -->
+        <button class="tb-overlay tb-dark" id="btn-alignment" title="Grid Alignment">
+          <span class="tb-overlay-text" id="alignment-label">Alignment</span>
+          <div class="tb-icon16" style="opacity:0.4;">
+            <img src="assets/chevron.svg" width="16" height="16" alt="Chevron">
+          </div>
+        </button>
+
+        <!-- Aspect Ratio Dropdown -->
+        <button class="tb-overlay tb-dark" id="btn-aspect" title="Aspect Ratio">
+          <span class="tb-overlay-text" id="aspect-label">Auto</span>
+          <div class="tb-icon16" style="opacity:0.4;">
+            <img src="assets/chevron.svg" width="16" height="16" alt="Chevron">
+          </div>
+        </button>
+
+        <!-- Palette Group -->
+        <div class="tb-palette-group">
+          <!-- Palette selector pill -->
+          <div class="tb-palette-inner">
+            <button class="tb-overlay tb-dark tb-palette-btn" id="btn-palette-pick" title="Switch colour palette">
+              <span class="tb-overlay-text" id="palette-label">Noon</span>
+              <div class="tb-icon12">
+                <img src="assets/caret.svg" width="12" height="12" alt="Caret">
+              </div>
+            </button>
+            <!-- Color swatches -->
+            <div class="tb-swatches">
+              <button id="col-bg" class="tb-swatch" style="background-color: #FFF8E9" title="Background"></button>
+              <button id="col-sky" class="tb-swatch" style="background-color: #A9DBFF" title="Sky"></button>
+              <button id="col-activeDark" class="tb-swatch" style="background-color: #172119" title="Active Dark"></button>
+              <button id="col-activeMid" class="tb-swatch" style="background-color: #918E43" title="Active Mid"></button>
+              <button id="col-inactive" class="tb-swatch" style="background-color: #4D5024" title="Inactive"></button>
+            </div>
+          </div>
+          <!-- Plus / Save Palette -->
+          <button class="tb-plus" id="btn-save-palette" title="Save palette">
+            <img src="assets/plus.svg" width="14" height="14" alt="+">
+          </button>
+        </div>
+
+        <!-- Motion Tweaker Tab -->
+        <button class="tb-overlay tb-dark tb-tab" id="tab-motion" title="Motion Tweaker — control foreground wave, background wave & cellular automaton">
+          <span class="tb-overlay-text">Motion Tweaker</span>
+          <div class="tb-icon16">
+            <img src="assets/motion_sliders.svg" width="16" height="16" alt="Settings">
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Preset Picker Popup -->
+  <div id="preset-picker" class="picker-popup new-preset-picker hidden" style="padding:0; gap:0;">
+    <div class="preset-picker-header">
+      <span class="preset-picker-title">Shuffle</span>
+      <div class="preset-picker-icons">
+        <button id="preset-upload-btn" title="Upload Custom">
+          <img src="assets/plus-small.svg" width="10" height="10" alt="+">
+        </button>
+        <button id="preset-shuffle-btn" title="Randomize Preset">
+          <img src="assets/shuffle.svg" width="13" height="10" alt="Shuffle">
+        </button>
+      </div>
+    </div>
+    <div class="preset-picker-list" id="preset-list"></div>
+  </div>
+
+  <!-- Alignment Popup -->
+  <div id="alignment-popup" class="tweaker-panel tp-popup is-popup hidden">
+    <div class="tp-group">
+      <button class="tp-section-header active" data-value="Tight">Grid</button>
+      <button class="tp-section-header" data-value="Column Step">Vertical</button>
+      <button class="tp-section-header" data-value="Column + Row Step">Mosaic</button>
+    </div>
+  </div>
+
+  <!-- Aspect Popup -->
+  <div id="aspect-popup" class="tweaker-panel tp-popup is-popup hidden">
+    <div class="tp-group">
+      <button class="tp-section-header tp-aspect-btn active" data-value="Free">
+        <span>Auto</span><span>Free</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="1:1">
+        <span>Square</span><span>1:1</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="4:5">
+        <span>IG Portrait</span><span>4:5</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="9:16">
+        <span>Reel / TikTok</span><span>9:16</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="16:9">
+        <span>YouTube / X Post</span><span>16:9</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="1.91:1">
+        <span>Ln Link Share</span><span>1.91:1</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="4:1">
+        <span>LinkedIn Banner</span><span>4:1</span>
+      </button>
+      <button class="tp-section-header tp-aspect-btn" data-value="3:1">
+        <span>X Banner</span><span>3:1</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Palette Popup -->
+  <div id="palette-popup" class="tweaker-panel tp-popup is-popup hidden">
+    <div class="tp-group">
+      <button class="tp-section-header active" data-value="Morning">Morning</button>
+      <button class="tp-section-header" data-value="Noon">Noon</button>
+      <button class="tp-section-header" data-value="Evening">Evening</button>
+      <button class="tp-section-header" data-value="Night">Night</button>
+    </div>
+  </div>
+
+  <!-- Custom Color Picker Popup -->
+  <div id="color-picker-popup" class="picker-popup is-popup hidden" style="padding: 2px; background: #333; flex-direction: row; gap: 2px; min-width: auto; border: 1.786px solid transparent; border-radius: 2px;">
+    <button class="cp-swatch" style="background-color: #fff8e9" data-color="#fff8e9"></button>
+    <button class="cp-swatch" style="background-color: #ffd745" data-color="#ffd745"></button>
+    <button class="cp-swatch" style="background-color: #f65926" data-color="#f65926"></button>
+    <button class="cp-swatch" style="background-color: #972053" data-color="#972053"></button>
+    <button class="cp-swatch" style="background-color: #8e7552" data-color="#8e7552"></button>
+    <button class="cp-swatch" style="background-color: #918e43" data-color="#918e43"></button>
+    <button class="cp-swatch" style="background-color: #4d5024" data-color="#4d5024"></button>
+    <button class="cp-swatch" style="background-color: #a9dbff" data-color="#a9dbff"></button>
+    <button class="cp-swatch" style="background-color: #21465e" data-color="#21465e"></button>
+    <button class="cp-swatch" style="background-color: #1b1521" data-color="#1b1521"></button>
+    <button class="cp-swatch" style="background-color: #0a0a0a" data-color="#0a0a0a"></button>
+  </div>
+
+  <!-- Image Tweaker Panel -->
+  <div class="tweaker-panel hidden" id="panel-image">
+    <!-- Resolution -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Resolution</span>
+        <button class="header-icon-btn" id="btn-anim-density" title="Automate resolution with a slow oscillating wave">
+          <img src="assets/play.svg" width="14" height="14" alt="Play">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-val" id="density-val">64</span>
+        </div>
+        <input type="range" id="param-density" min="0" max="4" value="2" step="1" class="tp-slider" title="Grid tile count — lower = fewer larger tiles, higher = finer detail">
+      </div>
+    </div>
+    <!-- Zoom -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Zoom</span>
+        <button class="header-icon-btn" id="btn-anim-zoom" title="Automate zoom with a gentle scale in/out wave">
+          <img src="assets/play.svg" width="14" height="14" alt="Play">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-val" id="zoom-val">1.0</span>
+        </div>
+        <input type="range" id="param-zoom" min="1.0" max="2.0" step="0.1" value="1.0" class="tp-slider" title="Visual scale of the canvas — zooms in without resampling">
+      </div>
+    </div>
+    <!-- Threshold -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Threshold</span>
+        <button class="header-icon-btn" id="btn-anim-threshold" title="Automate threshold with an oscillating brightness cutoff wave">
+          <img src="assets/play.svg" width="14" height="14" alt="Play">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-val" id="threshold-val">200</span>
+        </div>
+        <input type="range" id="param-threshold" min="0" max="255" value="200" class="tp-slider" title="Brightness cutoff — higher values show fewer active tiles">
+      </div>
+    </div>
+    <!-- Distribution -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Distribution</span>
+        <button class="header-icon-btn" id="btn-anim-dist" title="Automate distribution across brightness zones">
+          <img src="assets/play.svg" width="14" height="14" alt="Play">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-val" id="dist-preset-val">1</span>
+        </div>
+        <input type="range" id="param-dist-preset" min="1" max="5" step="1" value="1" class="tp-slider" title="Shape density curve — controls how tiles are distributed across bright and dark zones">
+      </div>
+    </div>
+  </div>
+
+  <!-- Motion Tweaker Panel -->
+  <div class="tweaker-panel hidden" id="panel-motion">
+    <!-- Cellular Automation -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Cellular Automation</span>
+        <button class="header-icon-btn" id="btn-pause-ca" title="Pause cellular automaton">
+          <img src="assets/pause.svg" width="14" height="14" alt="Pause">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-sub-label">Influence</span>
+          <span class="tp-val" id="ca-influence-val">30</span>
+        </div>
+        <input type="range" id="param-ca-influence" min="0" max="255" value="30" class="tp-slider" title="How strongly the automaton shifts tile states each step">
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-sub-label">Update Per Sec</span>
+          <span class="tp-val" id="ca-speed-val">20</span>
+        </div>
+        <input type="range" id="param-ca-speed" min="1" max="60" value="20" class="tp-slider" title="Updates per second — higher = faster evolving automaton">
+      </div>
+    </div>
+    <!-- Foreground -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Foreground</span>
+        <button class="header-icon-btn" id="btn-pause-wave" title="Pause foreground wave animation">
+          <img src="assets/pause.svg" width="14" height="14" alt="Pause">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-sub-label">Intensity</span>
+          <span class="tp-val" id="wave-amp-val">0.5</span>
+        </div>
+        <input type="range" id="param-wave-amp" min="0" max="1" step="0.05" value="0.5" class="tp-slider" title="Foreground wave intensity — strength of glyph displacement">
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-sub-label">Speed</span>
+          <span class="tp-val" id="wave-speed-val">10</span>
+        </div>
+        <input type="range" id="param-wave-speed" min="1" max="50" value="10" class="tp-slider" title="Foreground wave speed — how fast the wave sweeps across the grid">
+      </div>
+    </div>
+    <!-- Background -->
+    <div class="tp-group">
+      <div class="tp-section-header has-action">
+        <span>Background</span>
+        <button class="header-icon-btn" id="btn-pause-color-wave" title="Pause background colour wave">
+          <img src="assets/pause.svg" width="14" height="14" alt="Pause">
+        </button>
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-sub-label">Intensity</span>
+          <span class="tp-val" id="color-wave-amp-val">0.5</span>
+        </div>
+        <input type="range" id="param-color-wave-amp" min="0" max="1" step="0.05" value="0.5" class="tp-slider" title="Background wave intensity — strength of colour shifting">
+      </div>
+      <div class="tp-slider-row">
+        <div class="tp-label-row">
+          <span class="tp-sub-label">Speed</span>
+          <span class="tp-val" id="color-wave-speed-val">10</span>
+        </div>
+        <input type="range" id="param-color-wave-speed" min="1" max="50" value="10" class="tp-slider" title="Background wave speed — how fast the colour shifts cycle">
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <script src="sketch.js?v=14"></script>
+</body>
+
 </html>

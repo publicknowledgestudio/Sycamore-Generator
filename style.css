@@ -1,8 +1,33 @@
+<<<<<<< Updated upstream
+=======
+/* ─── Reset & Base ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #d1d1d1;
+  font-family: 'Afacad', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+>>>>>>> Stashed changes
 @font-face {
   font-family: 'PixelFont';
   src: url('PPFraktionMono-Regular.otf') format('opentype');
 }
 
+<<<<<<< Updated upstream
 * {
   box-sizing: border-box;
 }
@@ -311,10 +336,617 @@ input[type="color"] {
   box-shadow: 16px 16px 0px rgba(0,0,0,0.25);
   border: 6px solid #000;
   background-color: #FFF8E9;
+=======
+/* ─── Viewport ──────────────────────────────────────── */
+#viewport-bg {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 32px 12px;
+  overflow: hidden;
+}
+
+#canvas-container {
+  border-radius: 2px;
+  overflow: hidden;
+>>>>>>> Stashed changes
   display: flex;
   max-width: 100%;
   max-height: 100%;
 }
 canvas {
   display: block;
+}
+
+/* ─── Toolbar Wrapper ───────────────────────────────── */
+#toolbar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 20px;
+  z-index: 50;
+}
+
+/* ─── Top Row ───────────────────────────────────────── */
+#toolbar-top-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+#toolbar-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  background: #111111;
+  padding: 8px;
+  /* exact: 286px content from Figma */
+}
+
+.tb-group {
+  display: flex;
+  align-items: center;
+}
+
+.tb-icon-cell {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.tb-icon-cell img {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.tb-btn {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.tb-btn:hover {
+  opacity: 0.75;
+}
+
+.tb-btn:active {
+  opacity: 0.5;
+}
+
+/* Preset thumbnail */
+.tb-thumb-cell {
+  cursor: pointer;
+}
+
+.tb-thumb-frame {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #f3f3f3;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tb-thumb-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  display: block;
+}
+
+.tb-vdivider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+/* Recording active state */
+#btn-record.recording {
+  opacity: 0.5;
+}
+
+#btn-record.recording img {
+  filter: hue-rotate(120deg) saturate(3);
+}
+
+/* ─── Bottom Row ────────────────────────────────────── */
+#toolbar-bottom-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+#toolbar-bottom {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #454545;
+  padding: 8px;
+}
+
+/* Overlay buttons (Figma "Overlay" component) */
+.tb-overlay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.tb-overlay-text {
+  font-family: 'Afacad', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.1429px;
+  color: #ffffff;
+}
+
+.tb-dark {
+  background: #161616;
+}
+
+/* Active state for all overlay buttons — yellow */
+.tb-overlay.active {
+  background: #FFCC00;
+}
+
+.tb-overlay.active .tb-overlay-text {
+  color: #161616;
+}
+
+.tb-icon16 {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tb-icon16 img {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+.tb-icon12 {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tb-icon12 img {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
+/* Palette Group */
+.tb-palette-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tb-palette-inner {
+  display: inline-flex;
+  align-items: stretch;
+  background: #333333;
+  gap: 2px;
+}
+
+.tb-palette-btn {
+  padding: 10px 14px;
+  gap: 8px;
+}
+
+/* Color swatches — exact 32x32 from Figma */
+.tb-swatches {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.tb-swatch {
+  width: 32px;
+  height: 36px;
+  /* inherits container height */
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  display: block;
+  flex-shrink: 0;
+  background: #333;
+  /* override default browser swatch styling */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.tb-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.tb-swatch::-webkit-color-swatch {
+  border: none;
+}
+
+.cp-swatch {
+  width: 20px;
+  height: 20px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  border-radius: 2px;
+  flex-shrink: 0;
+  transition: transform 0.1s;
+}
+
+.cp-swatch:hover {
+  transform: scale(1.1);
+}
+
+/* Plus button */
+.tb-plus {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #161616;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: opacity 0.15s;
+}
+
+.tb-plus:hover {
+  opacity: 0.7;
+}
+
+.tb-plus img {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+/* ─── Popup Pickers ─────────────────────────────────── */
+.picker-popup {
+  position: fixed;
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+  min-width: 200px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+}
+
+.picker-popup:active {
+  cursor: grabbing;
+}
+
+.picker-popup.hidden {
+  display: none;
+}
+
+.new-preset-picker {
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+  min-width: 220px;
+  background: #111;
+  overflow: hidden;
+}
+
+.preset-picker-header {
+  background: #454545;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  cursor: grab;
+}
+
+.preset-picker-header:active {
+  cursor: grabbing;
+}
+
+.preset-picker-title {
+  font-family: 'Afacad', sans-serif;
+  font-weight: 500;
+  font-size: 14.736px;
+  color: #fff;
+  letter-spacing: -0.1072px;
+}
+
+.preset-picker-icons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.preset-picker-icons button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.preset-picker-icons button img {
+  display: block;
+  object-fit: contain;
+}
+
+.preset-picker-icons button:hover {
+  opacity: 1;
+}
+
+.preset-picker-list {
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.preset-list-item {
+  font-family: 'Afacad', sans-serif;
+  font-weight: 500;
+  font-size: 14.736px;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: -0.1072px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-align: left;
+  border: none;
+  background: transparent;
+  width: 100%;
+}
+
+.preset-list-item:hover,
+.preset-list-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Custom Scrollbar for Preset List */
+.preset-picker-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.preset-picker-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* ─── Tweaker Panels (Figma 1:1) ────────────────────── */
+.tweaker-panel {
+  position: fixed;
+  background: #111111;
+  border: 1.786px solid rgba(0, 0, 0, 0);
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 180;
+  width: 240px;
+  /* matching Figma ~224px width */
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+}
+
+.tweaker-panel.hidden {
+  display: none;
+}
+
+.tp-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.tp-section-header {
+  background: #292929;
+  padding: 10px 12px;
+  font-family: 'Afacad', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: -0.1072px;
+  line-height: 16px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+}
+
+/* For interactive list popups (Alignment/Palette) */
+.is-popup .tp-section-header {
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.is-popup .tp-section-header:hover,
+.is-popup .tp-section-header.active {
+  background: #292929;
+}
+
+.tp-aspect-btn {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.tp-aspect-btn span:last-child {
+  opacity: 0.6;
+}
+
+/* Narrow popup container class */
+.tp-popup {
+  width: 160px !important;
+}
+
+/* Figma matched aspect ratio popup */
+#aspect-popup {
+  width: 188px !important;
+  padding: 8px !important;
+  gap: 8px !important;
+}
+
+#aspect-popup .tp-aspect-btn {
+  font-family: 'Afacad', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 10px 4px !important;
+  line-height: 16px !important;
+  letter-spacing: -0.1429px !important;
+}
+
+.tp-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.tp-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  line-height: 1;
+}
+
+.tp-sub-label {
+  font-family: 'Afacad', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: -0.1429px;
+}
+
+/* Value indicator */
+.tp-val {
+  font-family: 'Afacad', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Custom Minimalist Slider */
+.tp-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  /* container height for thumb */
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Track using custom SVG line or pure CSS */
+.tp-slider::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+
+/* Thumb - White 10x10 square */
+.tp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  border-radius: 0;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 2px #111;
+  /* separation from track */
+}
+
+.tp-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  border-radius: 0;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 0 2px #111;
+}
+
+/* Toggles (Hidden in Figma design but kept functionality in JS) */
+/* (We keep toggles hidden if user didn't request them in the new design) */
+
+.tp-section-header.has-action {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin: -4px; /* to compensate for padding without distorting header height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.header-icon-btn:hover {
+  opacity: 1;
+}
+
+.header-icon-btn img {
+  width: 14px;
+  height: 14px;
 }
